@@ -1,12 +1,23 @@
-import { getLevel } from '../mock';
-import fetchData from '../http';
 jest.mock('../http');
 
-beforeEach(() => {
-    jest.resetAllMocks();
-});
-test('test getLevel', () => {
-    fetchData.mockReturnValue(JSON.stringify({}));
-    getLevel(1);
-    expect(fetchData).toBeCalledWith('https://server/user/1');
-});
+import { getLevel } from '../getLevel';
+import fetchData from '../http';
+import { createFetchData } from './createFetchData';
+
+describe("getLevel", () => {
+    test('return level', () => {
+        const fetchDataMock = createFetchData(10);
+
+        fetchData.mockImplementation(fetchDataMock);
+
+        expect(getLevel(1)).toBe("Ваш текущий уровень: 10")
+    });
+
+    test("return error", () => {
+        const fetchDataMock = createFetchData()
+
+        fetchData.mockImplementation(fetchDataMock);
+
+        expect(getLevel(1)).toBe('Информация об уровне временно недоступна')
+    })
+})
